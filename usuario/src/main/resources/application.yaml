@@ -21,7 +21,7 @@ spring:
       hibernate:
         show_sql: true
   rabbitmq:
-    addresses: amqps://jfjbuyzn:YVA3pFuUdOxbE4_5bL9srQzHY3YwpM4W@moose.rmq.cloudamqp.com/jfjbuyzn
+    addresses: amqps://cxsjvvjz:au7bfHJoqYGYvIfrDjsGuGVLTSw0gYrm@chimpanzee.rmq.cloudamqp.com/cxsjvvjz
 
 apireserva:
   api:
@@ -36,7 +36,7 @@ ead:
     username: serviceregistry
     password: 'ead123sr'
   auth:
-    jwtSecret: VmYq3t6w9z$C&F)H@McQfTjWnZr4u7x!A%D*G-KaNdRgUkXp2s5v8y/B?E(H+MbQ
+    jwtSecret: 5u8x/A%D*G-KaPdSgVkYp3s6v9y$B&E(H+MbQeThWmZq4t7w!z%C*F-J@NcRfUjX
     jwtExpirationMs: 14400000
 
 eureka:

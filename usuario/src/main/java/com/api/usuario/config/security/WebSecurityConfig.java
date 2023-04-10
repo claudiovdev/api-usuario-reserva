@@ -26,6 +26,8 @@ public class WebSecurityConfig {
 
     @Autowired
     AuthenticationEntryPointImpl authenticationEntryPoint;
+
+
     private static final String[] AUTH_WHITELIST ={
             "/api/**"
     };
@@ -35,7 +37,8 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        /*http
+
+        http
                 .exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint)
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -44,15 +47,14 @@ public class WebSecurityConfig {
                 .antMatchers(AUTH_WHITELIST).permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .csrf().disable()
-                .formLogin();
+                .csrf().disable();
         http.addFilterBefore(authenticationJwtFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
 
 
 
-         */
+       /*
         http
                 .httpBasic()
                 .authenticationEntryPoint(authenticationEntryPoint)
@@ -66,12 +68,31 @@ public class WebSecurityConfig {
                 .formLogin();
         return http.build();
 
+
+        */
+
+        /*
+        http
+                .exceptionHandling()
+                .authenticationEntryPoint(authenticationEntryPoint)
+                .and()
+                .csrf()
+                .disable()
+                .authorizeHttpRequests()
+                .antMatchers(AUTH_WHITELIST).permitAll()
+                .anyRequest()
+                .authenticated()
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .addFilterBefore(authenticationJwtFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+
+
+         */
     }
-
-
-
-
-
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -79,6 +100,10 @@ public class WebSecurityConfig {
     }
 
 
+    @Bean
+    public  AuthenticationJwtFilter authenticationJwtFilter(){
+        return new AuthenticationJwtFilter();
+    }
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

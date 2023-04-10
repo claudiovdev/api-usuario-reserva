@@ -1,5 +1,6 @@
 package com.api.usuario.config.security;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,24 +27,45 @@ public class AuthenticationJwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        try {
-           String jwtStr = getTokenHeader(request);
-           if(jwtStr != null && jwtProvider.validateJwt(jwtStr)){
-               String username = jwtProvider.getUsernameJwt(jwtStr);
-               UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-               UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-               authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-               SecurityContextHolder.getContext().setAuthentication(authentication);
-           }
-        }catch (Exception e){
-            logger.error("Cannot set User Authentication: {}", e);
+
+        final String authHeader = request.getHeader("Authorization");
+        final String jwt;
+        final String userEmail;
+
+        if (request.getRequestURI().equals("/api-usuario/api/login")){
+            if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            if (authHeader != null && jwtProvider.validateJwt(authHeader)) {
+                filterChain.doFilter(request, response);
+                return;
+            }
         }
+        jwt = authHeader.substring(7);
+        userEmail = jwtProvider.getUsernameJwt(jwt);
+        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+            if (jwt != null && jwtProvider.validateJwt(jwt)) {
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities()
+                );
+                authToken.setDetails(
+                        new WebAuthenticationDetailsSource().buildDetails(request)
+                );
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
+        }
+        filterChain.doFilter(request, response);
     }
 
     private String getTokenHeader(HttpServletRequest request){
         String headerAuth = request.getHeader("Authorization");
-        if(StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")){
-            return headerAuth.substring(7,headerAuth.length());
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+            return headerAuth.substring(7, headerAuth.length());
         }
         return null;
     }

@@ -52,6 +52,7 @@ public class UsuarioController {
         UsuarioDomain usuario = mapperApi.toDomain(usuarioModelRequest);
        usuario =  usuarioService.cadastrarUsuario(usuario);
         UsuarioModelResponse usuarioModelResponse =  mapperApi.toResponse(usuario);
+
         return usuarioModelResponse;
     }
 
@@ -70,6 +71,7 @@ public class UsuarioController {
         String jwt = jwtProvider.generateJwt(authentication);
         return ResponseEntity.ok(new JwtRequest(jwt));
     }
+
 
     @GetMapping
     public List<UsuarioModelResponse> listarTodos(){
