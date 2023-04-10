@@ -1,32 +1,29 @@
-
 server:
   port: 8083
   servlet:
-    context-path: '/api-usuario/'
+    context-path: "/api-usuario/"
 
 spring:
   application:
     name: apireserva-usuario-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/microsservicos-usuario
-    username: postgres
-    password: vini4222
+    url: jdbc:mysql://db:3306/clientes_db?useTimezone=true&serverTimezone=UTC&createDatabaseIfNotExist=true
+    username: root
+    password: vinicius@123
+
   jpa:
+    hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+    hibernate.ddl-auto: update
     hibernate:
-      ddl-auto: update
-      dialect: org.hibernate.dialect.PostgreSQLDialect
-      jdbc:
-        lob.non-contextual-creation: true
-    properties:
-      hibernate:
-        show_sql: true
+      jdbc: time_zone = TimeZone
+    show-sql: true
   rabbitmq:
     addresses: amqps://cxsjvvjz:au7bfHJoqYGYvIfrDjsGuGVLTSw0gYrm@chimpanzee.rmq.cloudamqp.com/cxsjvvjz
 
 apireserva:
   api:
     url:
-      reserva: 'http://apireserva-reserva-service'
+      reserva: "http://apireserva-reserva-service"
   broker:
     exchange:
       userEvent: apireserva.eventoDeUsuario
@@ -34,7 +31,7 @@ apireserva:
 ead:
   serviceRegistry:
     username: serviceregistry
-    password: 'ead123sr'
+    password: "ead123sr"
   auth:
     jwtSecret: 5u8x/A%D*G-KaPdSgVkYp3s6v9y$B&E(H+MbQeThWmZq4t7w!z%C*F-J@NcRfUjX
     jwtExpirationMs: 14400000
@@ -42,6 +39,6 @@ ead:
 eureka:
   client:
     serviceUrl:
-      defaultZone: 'http://${ead.serviceRegistry.username}:${ead.serviceRegistry.password}@localhost:8761/eureka'
+      defaultZone: "http://${ead.serviceRegistry.username}:${ead.serviceRegistry.password}@localhost:8761/eureka"
   instance:
     hostname: localhost
